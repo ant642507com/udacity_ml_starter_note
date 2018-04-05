@@ -3,7 +3,7 @@
 ## 2.4 Numpy & Pandas中的一维数据
 
 ### 2.4.1 读取CSV文件中的内容，并返回数据集list
-```
+```python
 import unicodecsv
 
 def read_csv(filename):
@@ -16,7 +16,7 @@ daily_management = read_csv('daily_management_full.csv')
 
 ### 2.4.2 从传入的数据集合中，对数据元素进行去重，并返回
 
-```
+```python
 def get_unique_students(data):
     unique_students = set()
     for data_point in data:
@@ -28,7 +28,7 @@ len(unique_engagement_students)
 ```
 ### 2.4.3 使用pandas内置的函数，读取CSV文件并去重
 使用Pandas 实现了 2.4.1 和2.4.2 中代码的功能。
-```
+```python
 import pandas as pd
 daily_engagement = pd.read_csv('daily_management_full.csv')
 len(daily_engagement['acct'].unique())
@@ -38,7 +38,7 @@ len(daily_engagement['acct'].unique())
 Pandas的Series是建立在Numpy的array之上的，功能更丰富。
 
 创建numpy array
-```
+```python
 import numpy as np
 countries = np.array(["Albania", "Angola",...])
 ```
@@ -46,16 +46,16 @@ countries = np.array(["Albania", "Angola",...])
 ### 2.5.1 Numpy array 与python list的用法相同点
 
 ### 2.5.1.1 通过下标访问Numpy元素
-```
+```python
 a[0] = 'AL'
 ```
 ### 2.5.1.1 通过切片来访问某一范围元素
-```
+```python
 a[1:3] = ["AA", "BB"]
 print(a[:])
 ```
 ### 2.5.1.2 通过循环访问元素
-```
+```python
 for x in a:
     ....
 ```
@@ -67,7 +67,7 @@ for x in a:
 ### 2.5.3 通过numpy.argmax返回最大值的索引
 numpy.argmax 可以返回最大值的位置
 使用数组的实现：
-```
+```python
 def max_employment(countries, employment):
     max_country = None
     max_employment = 0
@@ -82,7 +82,7 @@ def max_employment(countries, employment):
     return (max_country, max_employment)
 ```
 使用numpy的实现
-```
+```python
 def max_employment(countries, employment):
     max_employment_index = employment.argmax()
     
@@ -95,7 +95,7 @@ def max_employment(countries, employment):
 ### 2.5.4 numpy.dtype 查看numpy中的数据类型
 
 ## 2.5 Numpy 向量化运算
-```
+```python
 1. 数学运算：+，-，*，/
 2. 逻辑运算：&， |， ~ （and， or， not）
 3. 比较运算：>, >=, <, <=, ==, !=
@@ -115,14 +115,14 @@ NumPy 也有类似的函数：逻辑或，逻辑非，用于对含整数型数�
 标准化数据定义：将各数据点转换为相对于平均值的标准偏差值。
 用来描述某个数据点相比于其他数据点有什么区别
 
-``` 
+```python
 """对数据进行标准化求值"""
 def standarize_data(values):
     return (values - values.mean()) / values.std()
 ```
 ## 2.7 Numpy索引数组
 
-```
+```python
 a = np.array([1,2,3,4,5])
 b = np.array([False, False, True, True, True])
 # b作为a的index array
@@ -131,7 +131,7 @@ a[b] = [3,4,5]
 a[a>3] = [4,5]
 ```
 应用实例：求7天之后放弃的学员的学习平均时长
-```
+```python
 def mean_time_for_paid_students(time_spent, days_to_cancel):
     return time_spent[days_to_cancel >= 7].mean()
 ```
@@ -139,7 +139,7 @@ def mean_time_for_paid_students(time_spent, days_to_cancel):
 ## 2.8 +与+=的区别
 
 Code Snap1:
-```
+```python
 import numpy as np
 a = np.array([1, 2, 3, 4])
 b = a
@@ -150,7 +150,7 @@ a += np.array([1, 1, 1, 1])
 print(b)
 ```
 Code Snap2: 
-```
+```python
 import numpy as np
 a = np.array([1, 2, 3, 4])
 b = a
@@ -165,7 +165,7 @@ print(b)
 +=运算是原位运算，加法运算不是原位运算
 原位运算是将新值存储在原来数据存放位置，覆盖原值
 
-```
+```python
 import numpy as np
 a = np.array([1, 2, 3, 4, 5, 6])
 """此处并没有创建新的数组，而是原数组的另一个视图（如果改变它，原数组也会变）"""
@@ -185,7 +185,7 @@ Pandas Series 和 Numpy array 类似，但提供了额外的功能。
 Numpy array 的运算 同样适用于 Pandas Series。
 （元素访问，切片，循环，以及提供的方便使用的函数mean,max,...）
 
-```
+```python
 # 求两个Series中，两个都大于或都小于平均值的数量
 # 相同方向数量：都大于数量+都小于数量
 # 不同方向数量：
@@ -203,7 +203,7 @@ def variable_correlation(variable1, variable2):
 numpy array 和 pandas series 的区别在于， pandas series有索引值
 pandas series 就像字典和列表的合集
 pandas series 在不指定索引的情况下，将以从0开始的数字作为索引值
-```
+```python
 life_expectancy = pd.Series([74.7, 75., 83.4, 57.6],
                             index=['Albania', 'Algeria', 'Andorra', 'Angola'])
 '''通过下标或者索引访问元素,不够明确'''
@@ -215,7 +215,7 @@ life_expectancy.iloc[0]
 ```
 
 pandas series argmax和loc的使用
-```
+```python
 """使用argmax获取最大值的索引"""
 def max_employment(employment):
     max_country = employment.argmax()
@@ -237,7 +237,7 @@ index在两个Series不同的部分，值为NaN。
 
 pandas.Series.apply() 和 Python中map.apply() 是一样的。
 
-```
+```python
 import pandas as pd
 s = pd.Series([1, 2, 3, 4, 5])
 def add_one(x):
@@ -247,7 +247,7 @@ print s.apply(add_one)
 
 ## 2.14 在Pandas中画图
 如果变量 data 是一个 NumPy 数组或 Pandas Series，就像它是一个列表一样，代码
-```
+```python
 import matplotlib.pyplot as plt
 plt.hist(data)
 plt.show()
@@ -259,7 +259,7 @@ Pandas 库实际上已经内置了 matplotlib 库的绘图函数。
 使用 data.plot() 创建 Series 的线条图。Series 索引被用于 x 轴，值被用于 y 轴。
 
 使用pandas的一个绘图例子:
-```
+```python
 import pandas as pd
 import seaborn as sns
 
@@ -276,7 +276,7 @@ employment_us.plot()
 ```
 
 如果想在IPython notebook中出现图表，加上以下代码
-```
+```python
 %pylab inline
 employment_us.plot()
 ```
