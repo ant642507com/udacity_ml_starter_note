@@ -27,17 +27,17 @@ unique_engagement_students = get_unique_students()
 len(unique_engagement_students)
 ```
 ### 2.4.3 使用pandas内置的函数，读取CSV文件并去重
-使用Pandas 实现了 2.4.1 和2.4.2 中代码的功能。
+* 使用Pandas 实现了 2.4.1 和2.4.2 中代码的功能。
 ```python
 import pandas as pd
 daily_engagement = pd.read_csv('daily_management_full.csv')
 len(daily_engagement['acct'].unique())
 ```
 ## 2.5 Numpy数组
-一维数据结构:Pandas中的Series， NumPy (ie. Numerical Python) 中的Array。
-Pandas的Series是建立在Numpy的array之上的，功能更丰富。
+* 一维数据结构:Pandas中的Series， NumPy (ie. Numerical Python) 中的Array。
+* Pandas的Series是建立在Numpy的array之上的，功能更丰富。
 
-创建numpy array
+* 创建numpy array
 ```python
 import numpy as np
 countries = np.array(["Albania", "Angola",...])
@@ -66,7 +66,7 @@ for x in a:
 
 ### 2.5.3 通过numpy.argmax返回最大值的索引
 numpy.argmax 可以返回最大值的位置
-使用数组的实现：
+* 使用数组的实现：
 ```python
 def max_employment(countries, employment):
     max_country = None
@@ -81,7 +81,8 @@ def max_employment(countries, employment):
         
     return (max_country, max_employment)
 ```
-使用numpy的实现
+
+* 使用numpy的实现
 ```python
 def max_employment(countries, employment):
     max_employment_index = employment.argmax()
@@ -112,8 +113,8 @@ NumPy 也有类似的函数：逻辑或，逻辑非，用于对含整数型数�
 ```
 
 ## 2.6 标准化数据
-标准化数据定义：将各数据点转换为相对于平均值的标准偏差值。
-用来描述某个数据点相比于其他数据点有什么区别
+* 标准化数据定义：将各数据点转换为相对于平均值的标准偏差值。
+* 用来描述某个数据点相比于其他数据点有什么区别
 
 ```python
 """对数据进行标准化求值"""
@@ -138,7 +139,7 @@ def mean_time_for_paid_students(time_spent, days_to_cancel):
 
 ## 2.8 +与+=的区别
 
-Code Snap1:
+* Code Snap1:
 ```python
 import numpy as np
 a = np.array([1, 2, 3, 4])
@@ -149,7 +150,7 @@ a += np.array([1, 1, 1, 1])
 """output value is array([2,3,4,5])"""
 print(b)
 ```
-Code Snap2: 
+* Code Snap2: 
 ```python
 import numpy as np
 a = np.array([1, 2, 3, 4])
@@ -162,8 +163,8 @@ print(b)
 ```
 
 ## 2.9 原地(in-place)与非原地
-+=运算是原位运算，加法运算不是原位运算
-原位运算是将新值存储在原来数据存放位置，覆盖原值
+* +=运算是原位运算，加法运算不是原位运算
+* 原位运算是将新值存储在原来数据存放位置，覆盖原值
 
 ```python
 import numpy as np
@@ -175,14 +176,14 @@ slice[0] = 100
 print(a)
 ```
 
-Numpy数组行为与Python列表的行为有所不同
-更改Numpy切片数据时，要格外谨慎
+* Numpy数组行为与Python列表的行为有所不同
+* 更改Numpy切片数据时，要格外谨慎
 
 ## 2.10 Pandas Series
 
-Pandas Series 和 Numpy array 类似，但提供了额外的功能。
+* Pandas Series 和 Numpy array 类似，但提供了额外的功能。
 例如：s.describe()
-Numpy array 的运算 同样适用于 Pandas Series。
+* Numpy array 的运算 同样适用于 Pandas Series。
 （元素访问，切片，循环，以及提供的方便使用的函数mean,max,...）
 
 ```python
@@ -200,9 +201,9 @@ def variable_correlation(variable1, variable2):
     return (num_same_direction, num_different_direction)
 ```
 ## 2.11 Pandas Series 索引
-numpy array 和 pandas series 的区别在于， pandas series有索引值
-pandas series 就像字典和列表的合集
-pandas series 在不指定索引的情况下，将以从0开始的数字作为索引值
+* numpy array 和 pandas series 的区别在于， pandas series有索引值
+* pandas series 就像字典和列表的合集
+* pandas series 在不指定索引的情况下，将以从0开始的数字作为索引值
 ```python
 life_expectancy = pd.Series([74.7, 75., 83.4, 57.6],
                             index=['Albania', 'Algeria', 'Andorra', 'Angola'])
@@ -214,7 +215,7 @@ life_expectancy.loc['Angola']
 life_expectancy.iloc[0]
 ```
 
-pandas series argmax和loc的使用
+* pandas series argmax和loc的使用
 ```python
 """使用argmax获取最大值的索引"""
 def max_employment(employment):
@@ -225,11 +226,11 @@ def max_employment(employment):
 
 ## 2.12 向量化运算和Series索引，填充缺失值
 
-将两个索引不同的Series相加，值的匹配是根据索引(index)进行，而不是位置
-默认情况下 index会取并集，value中index相同的部分会相加，
-index在两个Series不同的部分，值为NaN。
+* 将两个索引不同的Series相加，值的匹配是根据索引(index)进行，而不是位置
+* 默认情况下 index会取并集，value中index相同的部分会相加，
+* index在两个Series不同的部分，值为NaN。
 
-解决不出现NaN值的方法：
+* 解决不出现NaN值的方法：
 1. 使用pandas.Series.dropna() 来移除NaN。
 2. 使用pandas.Series..add(s2, fill_value=0), 提前给出默认值。
 
@@ -246,7 +247,7 @@ print s.apply(add_one)
 ```
 
 ## 2.14 在Pandas中画图
-如果变量 data 是一个 NumPy 数组或 Pandas Series，就像它是一个列表一样，代码
+* 如果变量 data 是一个 NumPy 数组或 Pandas Series，就像它是一个列表一样，代码
 ```python
 import matplotlib.pyplot as plt
 plt.hist(data)
@@ -254,7 +255,7 @@ plt.show()
 ```
 将创建数据的直方图.
 
-Pandas 库实际上已经内置了 matplotlib 库的绘图函数。
+* Pandas 库实际上已经内置了 matplotlib 库的绘图函数。
 
 使用 data.plot() 创建 Series 的线条图。Series 索引被用于 x 轴，值被用于 y 轴。
 
@@ -275,7 +276,7 @@ print(employment.index.values)
 employment_us.plot()
 ```
 
-如果想在IPython notebook中出现图表，加上以下代码
+* 如果想在IPython notebook中出现图表，加上以下代码
 ```python
 %pylab inline
 employment_us.plot()
