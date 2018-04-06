@@ -583,6 +583,312 @@ standardize_rows(grades_df)
 
 ## 3.13 Pandas.groupby() 
 
+类似于关系型数据库中对表数据的分组。
+
+* Python 参数传入：
+    *args可以传入列表，元组。**kwargs可以传入字典作为参数。
+
+* groupby对象也有很多内置的函数mean(),max(),etc... describe()，
+* 如果没有找到合适的，可以通过apply实现调用自定义函数。
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+values = np.array([1, 3, 2, 4, 1, 6, 4])
+example_df = pd.DataFrame({
+    'value': values,
+    'even': values % 2 == 0,
+    'above_three': values > 3 
+}, index=['a', 'b', 'c', 'd', 'e', 'f', 'g'])
+
+# Change False to True for each block of code to see what it does
+
+# Examine DataFrame
+if False:
+    print example_df
+    
+# Examine groups
+if False:
+    grouped_data = example_df.groupby('even')
+    # The groups attribute is a dictionary mapping keys to lists of row indexes
+    print grouped_data.groups
+    
+# Group by multiple columns
+if False:
+    grouped_data = example_df.groupby(['even', 'above_three'])
+    print grouped_data.groups
+    
+# Get sum of each group
+if False:
+    grouped_data = example_df.groupby('even')
+    print grouped_data.sum()
+    
+# Limit columns in result
+if False:
+    grouped_data = example_df.groupby('even')
+    
+    # You can take one or more columns from the result DataFrame
+    print grouped_data.sum()['value']
+    
+    print '\n' # Blank line to separate results
+    
+    # You can also take a subset of columns from the grouped data before 
+    # collapsing to a DataFrame. In this case, the result is the same.
+    print grouped_data['value'].sum()
+```
+
+```python
+ridership_by_day = subway_df.groupby('day_week').mean()['ENTRIESN_hourly']
+
+%pylab inline
+import seaborn as sns
+ridership_by_day.plot()
+```
+
+* Examples：
+DataFrame results
+
+>>> data.groupby(func, axis=0).mean()
+>>> data.groupby(['col1', 'col2'])['col3'].mean()
+DataFrame with hierarchical index
+
+>>> data.groupby(['col1', 'col2']).mean()
+
+* Pandas.groupby 函数的使用
+    参考[这里](http://pandas.pydata.org/pandas-docs/stable/groupby.html)
+
+* 应用实例
+
+```python
+import numpy as np
+import pandas as pd
+
+values = np.array([1, 3, 2, 4, 1, 6, 4])
+example_df = pd.DataFrame({
+    'value': values,
+    'even': values % 2 == 0,
+    'above_three': values > 3 
+}, index=['a', 'b', 'c', 'd', 'e', 'f', 'g'])
+#print(example_df)
+# Change False to True for each block of code to see what it does
+
+# Standardize each group
+if 0:
+    def standardize(xs):
+        return (xs - xs.mean()) / xs.std()
+    grouped_data = example_df.groupby('even')
+    print(grouped_data['value'].apply(standardize))
+    
+# Find second largest value in each group
+if 0:
+    def second_largest(xs):
+        sorted_xs = xs.sort_values(inplace=False, ascending=False)
+        return sorted_xs.iloc[1]
+    grouped_data = example_df.groupby('even')
+    print(grouped_data['value'].apply(second_largest))
+
+# --- Quiz ---
+# DataFrame with cumulative entries and exits for multiple stations
+ridership_df = pd.DataFrame({
+    'UNIT': ['R051', 'R079', 'R051', 'R079', 'R051', 'R079', 'R051', 'R079', 'R051'],
+    'TIMEn': ['00:00:00', '02:00:00', '04:00:00', '06:00:00', '08:00:00', '10:00:00', '12:00:00', '14:00:00', '16:00:00'],
+    'ENTRIESn': [3144312, 8936644, 3144335, 8936658, 3144353, 8936687, 3144424, 8936819, 3144594],
+    'EXITSn': [1088151, 13755385,  1088159, 13755393,  1088177, 13755598, 1088231, 13756191,  1088275]
+})
+
+def hourly_for_group(entries_and_exits):
+    return entries_and_exits - entries_and_exits.shift(1)
+    
+def get_hourly_entries_and_exits(entries_and_exits):
+    '''
+    Fill in this function to take a DataFrame with cumulative entries
+    and exits and return a DataFrame with hourly entries and exits.
+    The hourly entries and exits should be calculated separately for
+    each station (the 'UNIT' column).
+    
+    Hint: Take a look at the `get_hourly_entries_and_exits()` function
+    you wrote in a previous quiz, DataFrame Vectorized Operations. If
+    you copy it here and rename it, you can use it and the `.apply()`
+    function to help solve this problem.
+    '''
+    #print(list(entries_and_exits.groupby("UNIT")))
+    grouped_data = entries_and_exits.groupby("UNIT")["ENTRIESn", "EXITSn"].apply(hourly_for_group)
+    print(list(entries_and_exits.groupby("UNIT")["ENTRIESn", "EXITSn"]))
+    
+    print(grouped_data)
+    return None
+
+get_hourly_entries_and_exits(ridership_df)
+```
+
+## 3.14 合并 Pandas.DataFrame
+
+* 类似于关系型数据库的表连接。
+    1. inner join, 
+    1. left join, right join, 
+    1. left outer join, right outer join, 
+    1. full join
+    
+* pandas.merge
+  可以将两个表格合并为一个表格，从而创建一个含有这两个表格所有列的新表格。
+
+* 在数据合并前，先对数据去重，删除表中重复的数目
+
+```python
+submissions.merge(enrollments, on='account_key', how='left')
+# on 规定如何将不同表格的行进行匹配
+# how 决定的是 数据将以哪个表为主，非主表的数据将会被忽略
+```
+
+* 应用实例
+```python
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr  5 10:12:08 2018
+
+@author: admin
+"""
+
+import pandas as pd
+
+subway_df = pd.DataFrame({
+    'UNIT': ['R003', 'R003', 'R003', 'R003', 'R003', 'R004', 'R004', 'R004',
+             'R004', 'R004'],
+    'DATEn': ['05-01-11', '05-02-11', '05-03-11', '05-04-11', '05-05-11',
+              '05-01-11', '05-02-11', '05-03-11', '05-04-11', '05-05-11'],
+    'hour': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    'ENTRIESn': [ 4388333,  4388348,  4389885,  4391507,  4393043, 14656120,
+                 14656174, 14660126, 14664247, 14668301],
+    'EXITSn': [ 2911002,  2911036,  2912127,  2913223,  2914284, 14451774,
+               14451851, 14454734, 14457780, 14460818],
+    'latitude': [ 40.689945,  40.689945,  40.689945,  40.689945,  40.689945,
+                  40.69132 ,  40.69132 ,  40.69132 ,  40.69132 ,  40.69132 ],
+    'longitude': [-73.872564, -73.872564, -73.872564, -73.872564, -73.872564,
+                  -73.867135, -73.867135, -73.867135, -73.867135, -73.867135]
+})
+
+weather_df = pd.DataFrame({
+    'DATEn': ['05-01-11', '05-01-11', '05-02-11', '05-02-11', '05-03-11',
+              '05-03-11', '05-04-11', '05-04-11', '05-05-11', '05-05-11'],
+    'hour': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    'latitude': [ 40.689945,  40.69132 ,  40.689945,  40.69132 ,  40.689945,
+                  40.69132 ,  40.689945,  40.69132 ,  40.689945,  40.69132 ],
+    'longitude': [-73.872564, -73.867135, -73.872564, -73.867135, -73.872564,
+                  -73.867135, -73.872564, -73.867135, -73.872564, -73.867135],
+    'pressurei': [ 30.24,  30.24,  30.32,  30.32,  30.14,  30.14,  29.98,  29.98,
+                   30.01,  30.01],
+    'fog': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    'rain': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    'tempi': [ 52. ,  52. ,  48.9,  48.9,  54. ,  54. ,  57.2,  57.2,  48.9,  48.9],
+    'wspdi': [  8.1,   8.1,   6.9,   6.9,   3.5,   3.5,  15. ,  15. ,  15. ,  15. ]
+})
+
+def combine_dfs(subway_df, weather_df):
+    '''
+    Fill in this function to take 2 DataFrames, one with subway data and one with weather data,
+    and return a single dataframe with one row for each date, hour, and location. Only include
+    times and locations that have both subway data and weather data available.
+    '''
+    print(subway_df.head(3))
+    print(weather_df.head(3))
+    return subway_df.merge(weather_df, on=["DATEn", "hour", "longitude", "latitude"], how="inner")
+
+print(combine_dfs(subway_df, weather_df))
+```
+
+
+* 如果左表和右表的列名不同，使用left_on, right_on
+```python
+subway_df.merge(weather_df, 
+                left_on=["DATEn", "hour", "longitude", "latitude"],
+                right_on=["date", "hour", "longitude", "latitude"],
+                how='inner')
+```
+
+## 3.15 pandas.DataFrame 绘制图形
+
+* 使用DataFrame绘制图形
+    DataFrame 也像 Pandas Series 一样拥有 plot() 方法。如果 df 是 DataFrame，那么 df.plot() 将生成线条图，其中不同颜色的每条线代表 DataFrame 中的一个变量。这种方法能使你方便快速地查看数据，特别是对于小型 DataFrame 而言，但是对于更复杂的图形，你通常会希望直接使用 matplotlib
+    
+* 使用matplotlib绘图执行
+  [参考文档](http://matplotlib.org/api/pyplot_api.html)
+  
+* 应用实例
+
+* group by 使用的列，在后续处理中，还要使用的情况下，使用as_index=False来解决。
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+values = np.array([1, 3, 2, 4, 1, 6, 4])
+example_df = pd.DataFrame({
+    'value': values,
+    'even': values % 2 == 0,
+    'above_three': values > 3 
+}, index=['a', 'b', 'c', 'd', 'e', 'f', 'g'])
+
+# Change False to True for this block of code to see what it does
+
+# groupby() without as_index
+if False:
+    first_even = example_df.groupby('even').first()
+    print first_even
+    print first_even['even'] # Causes an error. 'even' is no longer a column in the DataFrame
+    
+# groupby() with as_index=False
+if False:
+    first_even = example_df.groupby('even', as_index=False).first()
+    print first_even
+    print first_even['even'] # Now 'even' is still a column in the DataFrame
+
+subway_df = pd.read_csv('subway_weather.csv')
+# 绘制地铁站的散点图， 并将纬度和精度分别设为x轴和y轴，将客流量设为气泡大小
+
+# 1. 按照经纬度对数据进行分组,计算出各车站的平均客流量
+data_by_location = subway_df.groupby(['latitude', 'longitude']).mean()
+
+# 这里latitude已经不是DataFrame的列，变成了DataFrame的行索引值
+# 可以通过在group_by中设置as_index=False 来解决该问题。
+data_by_location.head()['latitude']
+
+%pylab inline
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 绘制出散点图
+plt.scatter(data_by_location['latitude'], data_by_location['longitude'])
+
+# 绘制出带气泡大小的散点图
+# matplotlib scatterplot bubble size
+plt.scatter(data_by_location['latitude'], 
+            data_by_location['longitude'],
+            s=data_by_location['ENTRIESn_hourly'])
+
+# 设置气泡大小
+plt.scatter(data_by_location['latitude'], 
+            data_by_location['longitude'],
+            s=(data_by_location['ENTRIESn_hourly'] / data_by_location['ENTRIESn_hourly'].std())
+)
+
+```
+
+## 3.16 三维数据
+
+* NumPy 数组可以具有任意多的维度。
+* pandas.Panel 可以支持三维数据。
+    Pandas 有一个叫作 Panel 的数据结构，类似 DataFrame 或 Series，只不过用于 3D 数据。
+    不过当前已经Deprecated了。因为出现了更强大的库xarray
+
+* 多维数据结构的处理 xarray。
+    [xarray参考资料](http://xarray.pydata.org/en/stable/)
+    
 
 
 
