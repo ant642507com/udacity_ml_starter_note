@@ -210,5 +210,120 @@ df.to_csv('cancer_data_edited.csv', index=False)
 
 ```
 
-### 3.1.8 
+### 3.1.8 用可视化探索数据，使用Pandas绘图
+
+* 直方图 Histograms
+* 散点图 Scatterplots
+
+* 箱线图 
+
+```python
+import pandas as pd
+% matplotlib inline
+
+df_census = pd.read_csv('census_income_data.csv')
+df_census.info()
+
+df_census.hist()
+df_census.hist(figsize=(8, 8))
+df_census['age'].hist()
+df_census['age'].plot(kind='hist')
+df_census['education'].value_counts().plot(kind='bar')
+df_census['education'].value_counts().plot(kind='pie', figsize=(8, 8))
+
+df_cancer = pd.read_csv('cancer_data_edited.csv')
+df_cancer.info()
+"""迅速了解变量间的关系，还可以展示每个变量的直方图"""
+pd.plotting.scatter_matrix(df_cancer, figsize=(15, 15))
+
+df_cancer.plot(x='compactness', y='concavity', kind='scatter')
+
+df_cancer['concave_points'].plot(kind='box')
+
+#每个变量的箱线图
+df_cancer.plot(kind='box')
+
+
+```
+
+
+```python
+import pandas as pd
+
+df = pd.read_csv('cancer_data_edited.csv')
+df.head()
+
+# 过滤出所有恶性肿瘤数据
+df_m = df[df['diagnosis'] == 'M']
+# 过滤出所有良性肿瘤数据
+df_b = df[df['diagnosis'] == 'B']
+
+df_m.head()
+
+df_m['area'].describe()
+
+
+```
+
+相同的数据指标，分类对比
+```python
+import matplotlib.pyplot as plt
+
+% matplotlib inline
+
+fig, ax = plt.subplots(figsize=(8, 6))
+
+ax.hist(df_b['area'], alpha=0.5, label='benign')
+ax.hist(df_m['area'], alpha=0.5, label='malignant')
+
+ax.set_title('Distributions of Benign and Malignant Tumor Areas')
+ax.set_xlabel('Area')
+ax.set_ylabel('Count')
+ax.legend(loc='upper right')
+
+plt.show()
+
+```
+
+### 3.1.9 传达结果示例
+
+```python
+import pandas as pd
+
+% matplotlib inline
+
+df_census = pd.read_csv('census_income_data.csv')
+
+# 绘制柱状图，对比收入与教育程度的关系
+
+# 将收入分开
+df_a = pd_census[df_census['income'] == '>50K']
+df_b = pd_census[df_census['income'] == '<=50K']
+# 生成比较收入与教育程度的关系图
+df_a['education'].value_counts().plot(kind='bar')
+df_b['education'].value_counts().plot(kind='bar')
+# value_cournts 返回的值是按照大小来排序的
+
+# 使用相同的索引，保证两个图的横坐标使用相同的顺序
+ind = df_a['education'].value_counts().index
+df_a['education'].value_counts()[ind].plot(kind='bar')
+df_b['education'].value_counts()[ind].plot(kind='bar')
+
+# 绘制饼状图，对比两组的主要工薪阶层
+
+ind = df_a['workclass'].value_counts().index
+df_a['workclass'].value_counts()[ind].plot(kind='pie', figsize=(8, 8))
+df_b['workclass'].value_counts()[ind].plot(kind='pie', figsize=(8, 8))
+
+# 用直方图，绘制两组的年龄分布
+df_a['age'].hist()
+df_b['age'].hist()
+
+df_a['age'].describe()
+df_b['age'].describe()
+
+
+```
+
+
 
